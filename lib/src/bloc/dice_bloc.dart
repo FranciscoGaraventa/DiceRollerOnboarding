@@ -5,27 +5,46 @@ import '../screen/dice/dice_event.dart';
 import 'bloc.dart';
 
 class DiceBloc extends Bloc {
+  final int numberOfDices;
   final int maxNumDice = 6;
+  final _diceEventController = StreamController<List<RollEvent>>();
+  List<RollEvent> _diceEvents = List<RollEvent>();
 
-  Stream<RollEvent> get diceRoll => _diceEventController.stream;
-  final _diceEventController = StreamController<RollEvent>();
+  Stream<List<RollEvent>> get diceRolls => _diceEventController.stream;
+
+  DiceBloc({
+    this.numberOfDices,
+  });
 
   @override
   void dispose() {
     _diceEventController.close();
   }
 
-  RollEvent _mapEventToState(DiceEvent event) {
+  void _loadListEvents(bool loading) {
+    for (int i = 0; i < numberOfDices; i++) {
+      (loading == false)
+          ? _diceEvents.add(RollEvent(
+              diceValue: Random().nextInt(maxNumDice) + 1,
+              stateType: RollStateType.success,
+            ))
+          : _diceEvents.add(RollEvent(
+              stateType: RollStateType.loading,
+            ));
+    }
+  }
+
+  List<RollEvent> _mapEventToState(DiceEvent event) {
+    _diceEvents.clear();
     switch (event) {
       case DiceEvent.rollEvent:
-        return RollEvent(
-          diceValue: Random().nextInt(maxNumDice) + 1,
-          stateType: RollStateType.success,
-        );
+        _loadListEvents(false);
         break;
       default:
-        return RollEvent(stateType: RollStateType.loading);
+        _loadListEvents(true);
+        break;
     }
+    return _diceEvents;
   }
 
   @override
@@ -38,7 +57,9 @@ class DiceBloc extends Bloc {
   }
 
   void changeStatus() {
-    _diceEventController.sink.add(RollEvent(stateType: RollStateType.loading));
+    _diceEvents.clear();
+    _loadListEvents(true);
+    _diceEventController.sink.add(_diceEvents);
     _fetchData((event) {
       _diceEventController.sink.add(_mapEventToState(event));
     });

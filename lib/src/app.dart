@@ -15,8 +15,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    DiceBloc bloc = DiceBloc();
-    _blocs.add(bloc);
+    _blocs.add(DiceBloc(numberOfDices: 2));
     _blocs.forEach((bloc) {
       bloc.initialize();
     });

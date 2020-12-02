@@ -3,12 +3,14 @@ import '../styles/dimensions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class RollWidget extends StatelessWidget {
+class RollEvents extends StatelessWidget {
   final RollEvent rollEvent;
+  final Color rollNumberColor;
 
-  const RollWidget({
+  const RollEvents({
     Key key,
     this.rollEvent,
+    this.rollNumberColor = Colors.white,
   }) : super(key: key);
 
   Widget _buildContent(){
@@ -16,7 +18,7 @@ class RollWidget extends StatelessWidget {
       case RollStateType.loading:
         return CircularProgressIndicator();
       case RollStateType.initial:
-        return Text('Press button to roll.');
+        return Text('ROLL');
       case RollStateType.success:
         if (rollEvent.diceValue == null)
           return Text('Error');
@@ -24,6 +26,7 @@ class RollWidget extends StatelessWidget {
           return Text(
             '${rollEvent.diceValue}',
             style: TextStyle(
+              color: rollNumberColor,
               fontWeight: FontWeight.bold,
               fontSize: Dimension.rollWidgetTextFontSize,
             ),
