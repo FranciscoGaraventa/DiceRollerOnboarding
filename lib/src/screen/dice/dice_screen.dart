@@ -1,7 +1,5 @@
-import '../../widgets/onpressed_widget.dart';
-import '../../RollEvent.dart';
-import '../../styles/dimensions.dart';
-import '../../widgets/roll_widget.dart';
+import '../../widgets/dicestreambuilder.dart';
+import '../../widgets/roll_action.dart';
 import '../../bloc/dice_bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -30,34 +28,11 @@ class _DiceScreenState extends State<DiceScreen> {
           ),
         ),
         body: Center(
-          child: StreamBuilder(
-            stream: widget.diceBloc.diceRoll,
-            initialData: RollEvent(
-              stateType: RollStateType.initial,
-            ),
-            builder: (BuildContext context, snapshot) {
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    'Roll a dice:',
-                  ),
-                  Container(
-                    height: Dimension.diceContainerSize,
-                    child: RollWidget(
-                      rollEvent: (snapshot.hasData)
-                          ? snapshot.data
-                          : RollEvent(
-                              stateType: RollStateType.loading,
-                            ),
-                    ),
-                  ),
-                ],
-              );
-            },
+          child: DiceStreamBuilder(
+            diceBloc: widget.diceBloc,
           ),
         ),
-        floatingActionButton: OnPressWidget(
+        floatingActionButton: RollAction(
           diceBloc: widget.diceBloc,
         ));
   }
